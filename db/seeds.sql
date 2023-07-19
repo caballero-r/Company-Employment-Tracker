@@ -8,7 +8,7 @@ VALUES ("Jungler"),
        ("Support")
 
 -- Initial data for roles --
-INSERT INTO roles (title, salary, department_id)
+INSERT INTO role (title, salary, department_id)
 VALUES ('Assassin', 65000, 1),
        ('Marksman', 50000, 2),
        ('Tank', 70000, 3),
@@ -21,12 +21,12 @@ VALUES ('Assassin', 65000, 1),
 
 -- Initial data for employees --
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ('Phantom', 'Saber', 1, NULL),
-       ('Thunderbolt', 'Miya', 2, NULL),
-       ('Ironhead', 'Tigreal', 3, NULL),
-       ('Mystic', 'Cyclops', 4, NULL),
-       ('Grandbishop', 'Estes', 5, NULL),
-       ('Reaper', 'Argus', 6, NULL),
-       ('Mysticdaggers', 'Karina', 7, 1),
-       ('King', 'Franco', 8, 2),
-       ('Shadowblade', 'Alucard', 9, 3),          
+VALUES ('Phantom', 'Saber', 1, 7),
+       ('Thunderbolt', 'Miya', 2, 8),
+       ('Ironhead', 'Tigreal', 3, 8),
+       ('Mystic', 'Cyclops', 4, 7),
+       ('Grandbishop', 'Estes', 5, 8),
+       ('Reaper', 'Argus', 6, 9),
+       ('Mysticdaggers', 'Karina', 7, NULL),
+       ('King', 'Franco', 8, NULL),
+       ('Shadowblade', 'Alucard', 9, NULL);          
