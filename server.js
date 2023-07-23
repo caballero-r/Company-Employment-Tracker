@@ -32,7 +32,7 @@ function startInquirer() {
         {
             type: 'list',
             name: 'options',
-            message: 'Please choose from the following options to view it"s information',
+            message: 'Please choose from the following options.',
             choices:[
                 'View all departments',
                 'View all roles',
@@ -45,8 +45,17 @@ function startInquirer() {
         },
         ])
         .then((answers) => {
-            console.log(answers);
-            viewAllDepartments()
+        
+        // Switch statement to display functions depending on answers   
+        switch (answers.options) {
+            case 'View all departments':
+                viewAllDepartments();
+                break;
+            case 'View all roles':
+                viewAllRoles();
+                break;    
+        }   
+            
         })
         .catch((error) => {
             console.log(error, 'Something went wrong, please restart the process. Thank you!')
@@ -54,8 +63,22 @@ function startInquirer() {
 }
 
 // SQL queries 
+
+// View All Department Query
 function viewAllDepartments () {
     db.query('SELECT * FROM department', (err, res) => {
+        if (err) {
+            console.log('An error has occurred, please restart the process');
+        } else {
+            console.table(res);
+            startInquirer()
+        }
+    });
+}
+
+// View All Roles Query
+function viewAllRoles () {
+    db.query('SELECT * FROM role', (err, res) => {
         if (err) {
             console.log('An error has occurred, please restart the process');
         } else {
