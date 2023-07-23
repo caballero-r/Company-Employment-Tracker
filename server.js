@@ -64,6 +64,9 @@ function startInquirer() {
                 case 'Add an employee':
                     addAnEmployee()
                     break           
+                case 'Update an employee':
+                    updateAnEmployee()
+                    break                    
 			}
 		})
 		.catch((error) => {
@@ -80,7 +83,8 @@ function startInquirer() {
 function viewAllDepartments() {
 	db.query('SELECT * FROM department', (err, res) => {
 		if (err) {
-			console.log('An error has occurred, please restart the process')
+            console.log('An error has occurred, routing back to home')
+            startInquirer()
 		} else {
 			console.table(res)
 			startInquirer()
@@ -91,10 +95,11 @@ function viewAllDepartments() {
 // View all roles query
 function viewAllRoles() {
 	db.query(
-		'SELECT role.title AS "job title", role.id, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id',
+		'SELECT role.title AS "job title", role.id AS "role ID", role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id',
 		(err, res) => {
 			if (err) {
-				console.log('An error has occurred, please restart the process')
+                console.log('An error has occurred, routing back to home')
+                startInquirer()
 			} else {
 				console.table(res)
 				startInquirer()
@@ -106,7 +111,7 @@ function viewAllRoles() {
 // View all employees query
 function viewAllEmployees() {
 	db.query(
-		'SELECT employee.id, employee.first_name AS "first name", employee.last_name AS "last name", role.title AS "job title", department.name AS department, role.salary, CONCAT(manager.first_name, " ", manager.last_name) AS "reporting manager" FROM employee JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager on employee.manager_id = manager.id',
+		'SELECT employee.id AS "employee ID", employee.first_name AS "first name", employee.last_name AS "last name", role.title AS "job title", department.name AS department, role.salary, CONCAT(manager.first_name, " ", manager.last_name) AS "reporting manager" FROM employee JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager on employee.manager_id = manager.id',
 		(err, res) => {
 			if (err) {
                 console.log('An error has occurred, routing back to home')
@@ -236,6 +241,41 @@ function addAnEmployee() {
 		})  
 }
 
+// Update employee role ID
+function updateAnEmployee() {
+    inquirer.
+        prompt([
+            // User is asked to select an employee and to change the role ID
+            {
+                type: 'input',
+                name: 'employee_id',
+                message: 'Please type the employee ID number of the employee you would like to update. Please refer to employee table to determine employee ID number.'
+            },
+            {
+                type: 'number',
+                name: 'role_id',
+                message: 'Please type the new role ID number of this employee. Please refer to role table to determine role ID numbers.'
+            },
+        ]) 
+        .then((answers) => {
+            const { employee_id, role_id } = answers
+            db.query('UPDATE employee SET role_id = ? WHERE id = ?', [role_id, employee_id], (err, res) => {
+                if (err) {
+                    console.log('An error has occurred, routing back to home')
+                    startInquirer()
+                } else {
+                    console.log(`This employee's role has been updated in the database. View all employees to view update`)
+                    startInquirer()
+                }
+            })
+		})		
+        .catch((error) => {
+			console.log(
+				error,
+				'Something went wrong, please restart the process. Thank you!'
+			)
+		})  
+}
 
 // Initiate Inquirer Prompt
 startInquirer()
