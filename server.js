@@ -60,7 +60,10 @@ function startInquirer() {
                     break
                 case 'Add a role':
                     addARole()
-                    break         
+                    break     
+                case 'Add an employee':
+                    addAnEmployee()
+                    break           
 			}
 		})
 		.catch((error) => {
@@ -150,7 +153,7 @@ function addADepartment() {
 function addARole() {
     inquirer.
         prompt([
-            // User is asked to input the name of the new role 
+            // User is asked to input the information of the new role
             {
                 type: 'input',
                 name: 'title',
@@ -175,6 +178,52 @@ function addARole() {
                     startInquirer()
                 } else {
                     console.log(`The new role "${answers.title}" has been added to the database. View all roles to view the new role`)
+                    startInquirer()
+                }
+            })
+		})		
+        .catch((error) => {
+			console.log(
+				error,
+				'Something went wrong, please restart the process. Thank you!'
+			)
+		})  
+}
+
+// Adding an employee
+function addAnEmployee() {
+    inquirer.
+        prompt([
+            // User is asked to input the information of the new employee
+            {
+                type: 'input',
+                name: 'first_name',
+                message: 'Please type the first name of the employee'
+            },
+            {
+                type: 'input',
+                name: 'last_name',
+                message: 'Please type the last name of the employee'
+            },
+            {
+                type: 'number',
+                name: 'role_id',
+                message: 'Please type the role ID this employee belongs to'
+            },
+            {
+                type: 'number',
+                name: 'manager_id',
+                message: 'Please type the manager ID this employee reports to'
+            },
+        ]) 
+        .then((answers) => {
+            const { first_name, last_name, role_id, manager_id } = answers
+            db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [first_name, last_name, role_id, manager_id], (err, res) => {
+                if (err) {
+                    console.log('An error has occurred, routing back to home')
+                    startInquirer()
+                } else {
+                    console.log(`The new employee "${answers.first_name} ${answers.last_name}" has been added to the database. View all employees to view the new employee`)
                     startInquirer()
                 }
             })
