@@ -55,6 +55,9 @@ function startInquirer() {
 				case 'View all employees':
 					viewAllEmployees()
 					break
+                case 'Add a department':
+                    addADepartment()
+                    break    
 			}
 		})
 		.catch((error) => {
@@ -107,6 +110,35 @@ function viewAllEmployees() {
 			}
 		}
 	)
+}
+
+// Adding a department
+function addADepartment() {
+    inquirer.
+        prompt([
+            // User is asked to input the name of the new department 
+            {
+                type: 'input',
+                name: 'department',
+                message: 'Please type the name of the new department you are creating'
+            },
+        ]) 
+        .then((input) => {
+            db.query('INSERT INTO department (name) VALUES (?)', input.department, (err, res) => {
+                if (err) {
+                    console.log('An error has occurred, please restart the process')
+                } else {
+                    console.log(res, `The new department "${input.department}" has been added to the database. View all departments to view new department`)
+                    startInquirer()
+                }
+            })
+		})		
+        .catch((error) => {
+			console.log(
+				error,
+				'Something went wrong, please restart the process. Thank you!'
+			)
+		})  
 }
 
 // Initiate Inquirer Prompt
