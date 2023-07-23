@@ -57,7 +57,10 @@ function startInquirer() {
 					break
                 case 'Add a department':
                     addADepartment()
-                    break    
+                    break
+                case 'Add a role':
+                    addARole()
+                    break         
 			}
 		})
 		.catch((error) => {
@@ -103,7 +106,8 @@ function viewAllEmployees() {
 		'SELECT employee.id, employee.first_name AS "first name", employee.last_name AS "last name", role.title AS "job title", department.name AS department, role.salary, CONCAT(manager.first_name, " ", manager.last_name) AS "reporting manager" FROM employee JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager on employee.manager_id = manager.id',
 		(err, res) => {
 			if (err) {
-				console.log('An error has occurred, please restart the process')
+                console.log('An error has occurred, routing back to home')
+                startInquirer()
 			} else {
 				console.table(res)
 				startInquirer()
@@ -126,9 +130,10 @@ function addADepartment() {
         .then((input) => {
             db.query('INSERT INTO department (name) VALUES (?)', input.department, (err, res) => {
                 if (err) {
-                    console.log('An error has occurred, please restart the process')
+                    console.log('An error has occurred, routing back to home')
+                    startInquirer()
                 } else {
-                    console.log(res, `The new department "${input.department}" has been added to the database. View all departments to view new department`)
+                    console.log(`The new department "${input.department}" has been added to the database. View all departments to view new department`)
                     startInquirer()
                 }
             })
@@ -140,6 +145,48 @@ function addADepartment() {
 			)
 		})  
 }
+
+// Adding a role
+function addARole() {
+    inquirer.
+        prompt([
+            // User is asked to input the name of the new role 
+            {
+                type: 'input',
+                name: 'title',
+                message: 'Please type the name of the new role you are creating'
+            },
+            {
+                type: 'number',
+                name: 'salary',
+                message: 'Please type the salary for this new role'
+            },
+            {
+                type: 'number',
+                name: 'department_id',
+                message: 'Please type the department ID this role belongs to'
+            },
+        ]) 
+        .then((answers) => {
+            const { title, salary, department_id } = answers
+            db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, department_id], (err, res) => {
+                if (err) {
+                    console.log('An error has occurred, routing back to home')
+                    startInquirer()
+                } else {
+                    console.log(`The new role "${answers.title}" has been added to the database. View all roles to view the new role`)
+                    startInquirer()
+                }
+            })
+		})		
+        .catch((error) => {
+			console.log(
+				error,
+				'Something went wrong, please restart the process. Thank you!'
+			)
+		})  
+}
+
 
 // Initiate Inquirer Prompt
 startInquirer()
